@@ -8,12 +8,7 @@ import org.jsoup.select.Elements;
 
 public class SaveInfo {
 
-    private ArrayList<String> names = new ArrayList<String>();
-    private ArrayList<String> HRs = new ArrayList<String>();
-    private ArrayList<Integer> points = new ArrayList<Integer>();
-    private ArrayList<String> gender = new ArrayList<String>();
-
-    private ArrayList<Info> data = new ArrayList<Info>();
+    private ArrayList<Student> data = new ArrayList<Student>();
 
 
     public void add(String name, String HR, int point) {
@@ -25,13 +20,7 @@ public class SaveInfo {
             name_formatted = name.substring(0, name.indexOf(" "));
         }
 
-
-        names.add(name.strip());
-        genderize(name_formatted);
-        HRs.add(HR);
-        points.add(point);
-
-        Info person = new Info(point, name.strip(), HR, genderize(name_formatted));
+        Student person = new Student(point, name.strip(), HR, genderize(name_formatted));
         data.add(person);
 
     }
@@ -46,76 +35,29 @@ public class SaveInfo {
             document = Jsoup.connect("https://api.genderize.io/?name=" + name).ignoreContentType(true).get();
             Elements bod = document.getElementsByTag("body");
 
-            String data = bod.toString();
-            System.out.println(data);
+            String data = bod.toString();;
             data = data.replace("{","");
             data = data.replace("}","");
             double probability = Double.parseDouble(data.split(",")[2].split(":")[1]);
-            System.out.println(probability);
             String gndr = data.split(",")[1].split(":")[1].replaceAll("\"", "");
 
             if (probability < 0.7){
+                System.out.println("Unable to determine gender, please enter: ");
                 String gender = input.nextLine();
-                if (gender.toLowerCase().contains("m")){
-                    return "M";
-                }else if (gender.toLowerCase().contains("f")){
+                if (gender.toLowerCase().contains("f")){
                     return "F";
+                }else if (gender.toLowerCase().contains("m")){
+                    return "M";
                 }
             }
 
             if (gndr.equalsIgnoreCase("male")){
                 return "M";
-            }else{
+            }else {
                 return "F";
             }
-
-//            if (data.contains("female")) {
-//                if (probability < 0.7) {
-//                    System.out.println("Uncertain Gender, what gender is " + name + "? (M/F)");
-//                    userinput = input.nextLine();
-//                    if (userinput.equalsIgnoreCase("M")) {
-//                        gender.add("M");
-//                        return "M";
-//                    } else if (userinput.equalsIgnoreCase("F")) {
-//                        gender.add("F");
-//                        return "F";
-//                    }
-//                } else {
-//                    gender.add("F");
-//                    return "F";
-//                }
-//            } else if (data.contains("male")) {
-//                Double probability = Double.parseDouble(data.substring(data.indexOf("0"), data.indexOf("0.") + 4));
-//                System.out.print(probability);
-//                if (probability < 0.7) {
-//                    System.out.println("Uncertain Gender, what gender is " + name + "? (M/F)");
-//                    userinput = input.nextLine();
-//                    if (userinput.equalsIgnoreCase("M")) {
-//                        gender.add("M");
-//                        return "M";
-//                    } else if (userinput.equalsIgnoreCase("F")) {
-//                        gender.add("F");
-//                        return "F";
-//                    }
-//                } else {
-//                    gender.add("M");
-//                    return "M";
-//                }
-//            } else if (data.contains("null")) {
-//                System.out.println("Uncertain Gender, what gender is " + name + "? (M/F)");
-//                userinput = input.nextLine();
-//                if (userinput.equalsIgnoreCase("M")) {
-//                    gender.add("M");
-//                    return "M";
-//                } else if (userinput.equalsIgnoreCase("F")) {
-//                    gender.add("F");
-//                    return "F";
-//                }
-//
-//            }
-//
-//
         } catch (IOException e) {
+            System.out.println("Unable to connect to website, please enter gender: ");
             String gender = input.nextLine();
             if (gender.toLowerCase().contains("m")){
                 return "M";
@@ -126,30 +68,13 @@ public class SaveInfo {
         return null;
     }
 
-    public String[] searchST(String name) {
-        String[] ret = new String[3];
-
-        int id = names.indexOf(name.strip());
+    public Student searchStudent(String name) {
         for (int i = 0; i < data.size(); i++) {
             if (data.get(i).getName().equalsIgnoreCase(name)) {
-                id = i;
-                break;
+                return data.get(i);
             }
         }
-        if (id == -1) {
-            return new String[] {"NOID"};
-        }
-        Info person = data.get(id);
-        return new String[] {person.getHomeroom(), person.getGender(), Integer.toString(person.getPoints())};
-//        if (id == -1) {
-//            String[] noId = new String[1];
-//            noId[0] = "NOID";
-//            return noId;
-//        }
-//        ret[0] = HRs.get(id);
-//        ret[1] = gender.get(id);
-//        ret[2] = points.get(id).toString();
-
+        return null;
     }
 }
 

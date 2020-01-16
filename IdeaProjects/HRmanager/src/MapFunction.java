@@ -1,6 +1,4 @@
 import java.util.*;
-import java.util.Map.Entry;
-import java.util.Map.*;
 import java.io.*;
 
 public class MapFunction {
@@ -14,57 +12,15 @@ public class MapFunction {
 
         SaveInfo century_club = new SaveInfo();
 
-        century_club.add("Aaron-Vidal", "11", 10);
+        String[] names = new String[]{"Emiya", "Naoe", "Makoto", "Kiritsugu"};
 
-       String[] ret = century_club.searchST("Aaron-Vidal");
+        for (String name : names)
+            century_club.add(name, "11-02", 10);
 
-       for(int i = 0; i < ret.length; i++){
-           System.out.println(ret[i]);
-       }
-
-
-        /*
-        readDatabase();
-
-        while (true) {
-            int choice = 0;
-            chartMaker();
-            System.out.println("Looking for a homeroom? : 1");
-            System.out.println("Looking foAr a student? : 2");
-            System.out.println("Add a homeroom? : 3");
-            System.out.println("Add a student? : 4");
-
-            while (true) {
-                try {
-                    choice = input.nextInt();
-                    break;
-                } catch (InputMismatchException e) {
-                    System.out.println("Numbers only!");
-                }
-            }
-
-            if (choice == 1) {
-                System.out.println(searchHR());
-            }
-            if (choice == 2) {
-                System.out.println(searchST());
-            }
-            if (choice == 3) {
-                addHR();
-            }
-            if (choice == 4) {
-                addST();
-            }
-            if(choice == 5) {
-
-            }
-            if (choice == 6) {
-
-            }
-
-            saveMap();
+        for (String name : names) {
+            Student student = century_club.searchStudent(name);
+            System.out.println(student);
         }
-*/
     }
 
     public static String searchHR() {
