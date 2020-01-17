@@ -7,30 +7,19 @@ public class MapFunction {
 
     static HashMap<String, String> students = new HashMap<String, String>();
     static HashMap<String, String> homerooms = new HashMap<String, String>();
+    static SaveInfo century_club = new SaveInfo();
 
     public static void main(String args[]) throws IOException {
 
         Scanner input = new Scanner(System.in);
-
-        SaveInfo century_club = new SaveInfo();
-
-        century_club.add("Aaron-Vidal", "11", 10);
-
-       String[] ret = century_club.searchST("Aaron-Vidal");
-
-       for(int i = 0; i < ret.length; i++){
-           System.out.println(ret[i]);
-       }
-
-
-        /*
         readDatabase();
 
         while (true) {
             int choice = 0;
             chartMaker();
+            top100();
             System.out.println("Looking for a homeroom? : 1");
-            System.out.println("Looking foAr a student? : 2");
+            System.out.println("Looking for a student? : 2");
             System.out.println("Add a homeroom? : 3");
             System.out.println("Add a student? : 4");
 
@@ -40,6 +29,7 @@ public class MapFunction {
                     break;
                 } catch (InputMismatchException e) {
                     System.out.println("Numbers only!");
+                    break;
                 }
             }
 
@@ -55,16 +45,9 @@ public class MapFunction {
             if (choice == 4) {
                 addST();
             }
-            if(choice == 5) {
-
-            }
-            if (choice == 6) {
-
-            }
-
             saveMap();
         }
-*/
+
     }
 
     public static String searchHR() {
@@ -100,6 +83,8 @@ public class MapFunction {
             System.out.println("Student Not found.");
             STsearch = input.nextLine();
         }
+
+
     }
 
     public static void addHR() {
@@ -228,6 +213,9 @@ public class MapFunction {
 
                     }
                     chart[x][chart[0].length - 1] = Integer.toString(total);
+                    if (total >= 100) {
+                        century_club.add(chart[x][0].strip(), HR, total);
+                    }
 
                 }
 
@@ -290,6 +278,67 @@ public class MapFunction {
         System.out.println("Delete a homeroom, What is it called?");
         String HRname = input.nextLine();
         homerooms.remove(HRname);
+
+    }
+
+    public static void top100() throws IOException {
+        String[][] over100 = century_club.allData();
+        BufferedWriter bw = new BufferedWriter(new FileWriter("CenturyClub.html"));
+        boolean juniorF = true;
+        boolean juniorM = true;
+        boolean seniorF = true;
+        boolean seniorM = true;
+
+        bw.write("<html> <body>");
+
+        bw.write("<style>\r\n" + "table {\r\n" + "  font-family: arial, sans-serif;\r\n"
+                + "  border-collapse: collapse;\r\n" + "  width: 100%;\r\n" + "}\r\n" + "\r\n" + "td, th {\r\n"
+                + "  border: 2px solid #dddddd;\r\n" + "  text-align: left;\r\n" + "  padding: 8px;\r\n" + "}\r\n" + "</style>");
+
+        bw.write("<h1>" + "Century Club" + "</h1>");
+        bw.write("<table>");
+
+        bw.write("<tr> <th> Grade </th> <th> Name </th> <th> Points </th> <tr>");
+        for (int i = 0; i < over100.length; i++) {
+
+            if (seniorM == true && Integer.parseInt(over100[i][0]) > 9 && over100[i][3].equalsIgnoreCase("M")) {
+                seniorM = false;
+                bw.write("<tr style='background-color: #6ca0dc'>");
+
+            }
+            else if (seniorF == true && Integer.parseInt(over100[i][0]) > 9 && over100[i][3].equalsIgnoreCase("F")) {
+                seniorF = false;
+                bw.write("<tr style='background-color: #ffb6c1'>");
+
+            }
+           else if (juniorM == true && Integer.parseInt(over100[i][0]) < 10 && over100[i][3].equalsIgnoreCase("M")) {
+                juniorM = false;
+                bw.write("<tr style='background-color: #6ca0dc'>");
+
+            }
+           else if (juniorF == true && Integer.parseInt(over100[i][0]) < 10 && over100[i][3].equalsIgnoreCase("F")) {
+                juniorF = false;
+                bw.write("<tr style='background-color: #6ca0dc'>");
+
+            }
+            else{
+                bw.write("<tr>");
+            }
+
+
+            for(int x = 0; x < over100[0].length - 1; x++){
+                bw.write("<th>" + over100[i][x] + "</th>");
+            }
+
+            bw.write("</tr>");
+
+        }
+
+        bw.write("</table>");
+
+        bw.write("</body> </html>");
+        bw.close();
+
 
     }
 
